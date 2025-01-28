@@ -1,16 +1,39 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
+    static String[] translations = Language.checkLanguage();
+    static String helpText = translations[0];
+    static String startText = translations[1];
+    static String mainMenuText = translations[2];
+
+    public static void menu() {
+        System.out.println("      Project Signum ALPHA v 0.2");
+        System.out.println("      Author: Itcor (Aleksandr Shewchuk)");
+    }
+
+    public static void help() {
+        menu();
+        line();
+        System.out.println(helpText);
+        line();
+
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(startText);
+        scanner.nextLine();
+    }
 
     public static void clean() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
-    }
-
-    public static void menu() {
-        System.out.println("      Project Signum ALPHA v 0.1");
-        System.out.println("      Author: Itcor (Aleksandr Shewchuk)");
     }
 
     public static void line() {
@@ -18,22 +41,64 @@ public class Main {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
+        String itsStartedBefore = null;
+
+
+        // НАЧАЛО НАСТРОЙКИ ЯЗЫКА
+        // Чтение Settings.txt
+        // itsStartedBefore = ТРЕТЬЯ СТРОКА ФАЙЛА Settings.txt
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/Settings.txt"))) {
+            // Пропускаем две строки
+            reader.readLine();
+            reader.readLine();
+
+            // Читаем третью строку
+            itsStartedBefore = reader.readLine();
+        } catch (IOException e) {
+            System.out.println("ERROR!");
+        }
+
+        while (Objects.equals(itsStartedBefore, "0")) {
+            System.out.println("Выберите язык. Впишите 'ru' - для продолжения на русском языке.");
+            System.out.println("Select language. Input 'en' for english language");
+            System.out.println("Seleccionar idioma. Escribe 'es' para continuar en español.");
+            String selectLanguage = scanner.nextLine();
+
+            itsStartedBefore = switch (selectLanguage) {
+                case "ru", "en", "es" -> "1";
+                default -> itsStartedBefore;
+            };
+
+            // запись "пользователь впервые открывает программу?" значени "1" в 3-ю строку Settings.txt.
+            // запись языка в Settings.txt 1-ая строка
+            String filePath = "src/Settings.txt";
+            Path path = Paths.get(filePath);
+            List<String> lines = Files.readAllLines(path);
+            lines.set(2, "1");
+            lines.set(0, selectLanguage);
+            Files.write(path, lines);
+
+
+        }
+        // КОНЕЦ НАСТРОЙКИ ЯЗЫКА
+        clean();
 
 
 
+        // НАЧАЛО ЦИКЛА ПРОГРАММЫ
         boolean run = true;
-        while (run == true) {
+        while (run) {
+            clean(); // очищает консоль после каждой итерации с функциями (методами)
+
+
+
             // Начало консольного интерфейса
             line();
             menu();
             line();
-            System.out.println("[h] - Помощь");
-            System.out.println("[e] - Выход из приложения");
-            System.out.println("[l] - Список логинов и паролей, редактирование");
-            System.out.println("[n] - Добавить новый логин и пароль");
-            System.out.println("[g] - Сгенерировать пароль");
+            System.out.println(mainMenuText);
             line();
             System.out.println("Ваш ввод (английские буквы):");
 
@@ -45,7 +110,7 @@ public class Main {
                 // Вывод текста о помощи
                 case ("h"):
                     clean();
-                    //help()
+                    help();
                     break;
 
                 // Выход из программы
@@ -57,19 +122,25 @@ public class Main {
                 // Список логинов и паролей
                 case ("l"):
                     clean();
-                    //passwordsList()
+                    //passwordsList();
                     break;
 
                 // Добавить новый логин и пароль к словарю
                 case ("n"):
                     clean();
-                    //addNewPassword()
+                    //addNewPassword();
+                    break;
+
+                // Добавить новый логин и пароль к словарю
+                case ("s"):
+                    clean();
+                    //settings();
                     break;
 
                 // Генератор паролей
                 case ("g"):
                     clean();
-                    //passwordsGenerator()
+                    //passwordsGenerator();
                     break;
 
             }
