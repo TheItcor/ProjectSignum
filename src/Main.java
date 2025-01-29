@@ -14,13 +14,13 @@ public class Main {
     static String startText = translations[1];
     static String mainMenuText = translations[2];
 
-    public static void menu() {
+    public static void title() {
         System.out.println("      Project Signum ALPHA v 0.2");
         System.out.println("      Author: Itcor (Aleksandr Shewchuk)");
     }
 
     public static void help() {
-        menu();
+        title();
         line();
         System.out.println(helpText);
         line();
@@ -96,7 +96,7 @@ public class Main {
 
             // Начало консольного интерфейса
             line();
-            menu();
+            title();
             line();
             System.out.println(mainMenuText);
             line();
@@ -134,13 +134,38 @@ public class Main {
                 // Добавить новый логин и пароль к словарю
                 case ("s"):
                     clean();
+                    title();
+                    line();
+                    System.out.println("           Настройки");
+                    System.out.println("[l] - изменить язык");
+                    System.out.println("[y (число)] - изменить длину генерируемого пароля");
+                    System.out.println(startText);
+                    scanner.nextLine();
+
                     //settings();
                     break;
 
                 // Генератор паролей
                 case ("g"):
                     clean();
-                    //passwordsGenerator();
+                    title();
+                    line();
+
+                    int lengthPassword = 0;
+                    try (BufferedReader reader = new BufferedReader(new FileReader("src/Settings.txt"))) {
+                        reader.readLine();
+
+                        // Читаем вторую строку
+                        lengthPassword = Integer.parseInt(reader.readLine());
+                    } catch (IOException e) {
+                        System.out.println("ERROR!");
+                    }
+
+                    System.out.printf("Ваш сгенерированный пароль (длина %d):\n\n", lengthPassword);
+                    System.out.println(Generator.generatePassword(lengthPassword));
+                    System.out.println("\n(Уже скопирован в буфер обмена)");
+                    System.out.println(startText);
+                    scanner.nextLine();
                     break;
 
             }
