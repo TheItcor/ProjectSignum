@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,25 +10,44 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
-    static String[] translations = Language.checkLanguage();
-    static String helpText = translations[0];
-    static String startText = translations[1];
-    static String mainMenuText = translations[2];
+
+    ///              ============== !!! Особое внимание!!! ==============
+    static String version = "ALPHA v 0.4";
+    ///              ============== !!! Особое внимание!!! ==============
+
+
+
+    // Путь к настройкам
+    static String settingsTxtPath = "data" + File.separator + "Settings.txt";
+    static Path pathS = Paths.get(settingsTxtPath);
 
     public static void title() {
-        System.out.println("      Project Signum ALPHA v 0.2");
+        System.out.println("      Project Signum " + version);
         System.out.println("      Author: Itcor (Aleksandr Shewchuk)");
     }
 
     public static void help() {
         title();
         line();
-        System.out.println(helpText);
+        System.out.println("""
+                                Project Signum - это программа для сохранения\s
+                                логинов и паролей. Программа сохраняет ваши
+                                данные в зашифрованном виде, так чтобы злоумышленники
+                                не смогли бы их прочитать. Программа не отправляет\s
+                                данные пользователя куда-либо. Всё хранится исклю-
+                                чительно на вашем ПК. Для того, чтобы воспользо-
+                                ваться функциями программы в главном меню на-\s
+                                пишите соответствующую букву в списке команд.
+                                Так, к примеру введите букву 'n', чтобы создать\s
+                                Новую связку логина и паролей. Вы также можете\s
+                                воспользоваться документацией в README.MD для\s
+                                большей информации.\s
+                                """);
         line();
 
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println(startText);
+        System.out.println("Нажмите любую кнопку чтобы продолжить");
         scanner.nextLine();
     }
 
@@ -49,7 +69,9 @@ public class Main {
         // НАЧАЛО НАСТРОЙКИ ЯЗЫКА
         // Чтение Settings.txt
         // itsStartedBefore = ТРЕТЬЯ СТРОКА ФАЙЛА Settings.txt
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/Settings.txt"))) {
+
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(settingsTxtPath))) {
             // Пропускаем две строки
             reader.readLine();
             reader.readLine();
@@ -57,7 +79,7 @@ public class Main {
             // Читаем третью строку
             itsStartedBefore = reader.readLine();
         } catch (IOException e) {
-            System.out.println("ERROR!");
+            System.err.println("Ошибка при чтении файла: " + e.getMessage());
         }
 
         while (Objects.equals(itsStartedBefore, "0")) {
@@ -73,12 +95,10 @@ public class Main {
 
             // запись "пользователь впервые открывает программу?" значени "1" в 3-ю строку Settings.txt.
             // запись языка в Settings.txt 1-ая строка
-            String filePath = "src/Settings.txt";
-            Path path = Paths.get(filePath);
-            List<String> lines = Files.readAllLines(path);
+            List<String> lines = Files.readAllLines(pathS);
             lines.set(2, "1");
             lines.set(0, selectLanguage);
-            Files.write(path, lines);
+            Files.write(pathS, lines);
 
 
         }
@@ -98,7 +118,14 @@ public class Main {
             line();
             title();
             line();
-            System.out.println(mainMenuText);
+            System.out.println("""
+                        Команды:\s
+                        [h] - Помощь / О программе\s
+                        [e] - Выход из приложения\s
+                        [l] - Список логинов и паролей, редактирование\s
+                        [n] - Добавить новый логин и пароль\s
+                        [s] - Настройки программы\s
+                        [g] - Сгенерировать пароль""");
             line();
             System.out.println("Ваш ввод (английские буквы):");
 
@@ -131,18 +158,63 @@ public class Main {
                     //addNewPassword();
                     break;
 
-                // Добавить новый логин и пароль к словарю
+                // Изменение настроек
                 case ("s"):
+
+                    boolean settingsNotDone = true;
+                    while (settingsNotDone) {
+                        clean();
+                        title();
+                        line();
+                        System.out.println("           Настройки");
+                        System.out.println("[l ru/en/es] - изменить язык");
+                        System.out.println("[y (число)] - изменить длину генерируемого пароля");
+                        System.out.println("Нажмите любую кнопку чтобы продолжить");
+                        String userChoiceSettings = scanner.nextLine();
+
+                        String[] commandAndInput = userChoiceSettings.split(" ");
+
+                        // Изменение языка
+                        if (Objects.equals(commandAndInput[0], "l")) {
+                            List<String> lines = Files.readAllLines(pathS);
+                            switch (userChoiceSettings) {
+                                case ("l ru"):
+                                    lines.set(0, "ru");
+                                    Files.write(pathS, lines);
+                                    settingsNotDone = false;
+                                    break;
+                                case ("l en"):
+                                    lines.set(0, "en");
+                                    Files.write(pathS, lines);
+                                    settingsNotDone = false;
+                                    break;
+                                case ("l es"):
+                                    lines.set(0, "es");
+                                    Files.write(pathS, lines);
+                                    settingsNotDone = false;
+                                    break;
+                            }
+
+                        // изменение длины генерируемого пароля
+                        // Проверка: является ли первая буква y и есть ли только числа во второй части команды
+                        } else if (Objects.equals(commandAndInput[0], "y") && commandAndInput[1].matches("\\d+")) {
+                                List<String> lines = Files.readAllLines(pathS);
+                                int number = Integer.parseInt(commandAndInput[1]);
+                                lines.set(1, String.valueOf(number));
+                                Files.write(pathS, lines);
+                                settingsNotDone = false;
+                                break;
+                        } else {
+                            System.out.println("ERROR: Неверный ввод");
+                            scanner.nextLine();
+                        }
+                    }
+
                     clean();
                     title();
                     line();
-                    System.out.println("           Настройки");
-                    System.out.println("[l] - изменить язык");
-                    System.out.println("[y (число)] - изменить длину генерируемого пароля");
-                    System.out.println(startText);
+                    System.out.println("Настройки применены! Нажмите, чтобы продолжить");
                     scanner.nextLine();
-
-                    //settings();
                     break;
 
                 // Генератор паролей
@@ -152,7 +224,7 @@ public class Main {
                     line();
 
                     int lengthPassword = 0;
-                    try (BufferedReader reader = new BufferedReader(new FileReader("src/Settings.txt"))) {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(settingsTxtPath))) {
                         reader.readLine();
 
                         // Читаем вторую строку
@@ -164,7 +236,7 @@ public class Main {
                     System.out.printf("Ваш сгенерированный пароль (длина %d):\n\n", lengthPassword);
                     System.out.println(Generator.generatePassword(lengthPassword));
                     System.out.println("\n(Уже скопирован в буфер обмена)");
-                    System.out.println(startText);
+                    System.out.println("Нажмите любую кнопку чтобы продолжить");
                     scanner.nextLine();
                     break;
 
