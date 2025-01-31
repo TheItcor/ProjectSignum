@@ -7,6 +7,8 @@ Free password-manager just for you! Does not give data to third parties!
 ## How does this work?
 You enter the data about logins & passwords, it is immediately encrypted and saved on your hard drive. Then when you need it, the data is decrypted and you receive it!
 
+
+
 ## Alpha dev (100% Done)
 * Main feature - encrypt your data
 * SLP-files (Service-Login-Password)
@@ -14,10 +16,14 @@ You enter the data about logins & passwords, it is immediately encrypted and sav
 * Password generator
 * Added and removed translations (lol). It's only russian language for now
 
+
+
 ## Beta dev (work in progress)
 * Translations in English & Spanish
 * Cosmetics features
 * More!
+
+
 
 ## Release dev (in future...)
 * New encryption-tech for user's data.
