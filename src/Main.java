@@ -12,18 +12,20 @@ import java.util.Scanner;
 public class Main {
 
     ///              ============== !!! Особое внимание!!! ==============
-    static String version = "ALPHA v 0.4";
+    static String version = "ALPHA v 0.5";
     ///              ============== !!! Особое внимание!!! ==============
 
 
 
     // Путь к настройкам
-    static String settingsTxtPath = "data" + File.separator + "Settings.txt";
+    static final String settingsTxtPath = "data" + File.separator + "Settings.txt";
     static Path pathS = Paths.get(settingsTxtPath);
 
     public static void title() {
+        line();
         System.out.println("      Project Signum " + version);
         System.out.println("      Author: Itcor (Aleksandr Shewchuk)");
+        line();
     }
 
     public static void help() {
@@ -115,9 +117,7 @@ public class Main {
 
 
             // Начало консольного интерфейса
-            line();
             title();
-            line();
             System.out.println("""
                         Команды:\s
                         [h] - Помощь / О программе\s
@@ -149,13 +149,20 @@ public class Main {
                 // Список логинов и паролей
                 case ("l"):
                     clean();
-                    //passwordsList();
+                    title();
+                    SignumManager.readAllSlpFiles();
+                    line();
+                    System.out.println("Нажмите, чтобы продолжить");
+                    scanner.nextLine();
                     break;
 
                 // Добавить новый логин и пароль к словарю
                 case ("n"):
                     clean();
-                    //addNewPassword();
+                    title();
+                    SignumManager.newLoginAndPassword();
+                    System.out.println("Нажмите, чтобы продолжить");
+                    scanner.nextLine();
                     break;
 
                 // Изменение настроек
@@ -165,7 +172,6 @@ public class Main {
                     while (settingsNotDone) {
                         clean();
                         title();
-                        line();
                         System.out.println("           Настройки");
                         System.out.println("[l ru/en/es] - изменить язык");
                         System.out.println("[y (число)] - изменить длину генерируемого пароля");
@@ -212,8 +218,9 @@ public class Main {
 
                     clean();
                     title();
+                    System.out.println("Настройки применены!");
                     line();
-                    System.out.println("Настройки применены! Нажмите, чтобы продолжить");
+                    System.out.println("Нажмите любую кнопку чтобы продолжить");
                     scanner.nextLine();
                     break;
 
@@ -221,16 +228,15 @@ public class Main {
                 case ("g"):
                     clean();
                     title();
-                    line();
 
                     int lengthPassword = 0;
                     try (BufferedReader reader = new BufferedReader(new FileReader(settingsTxtPath))) {
                         reader.readLine();
 
-                        // Читаем вторую строку
+                        // Читаем вторую строку, где находится параметр размера для пароля
                         lengthPassword = Integer.parseInt(reader.readLine());
                     } catch (IOException e) {
-                        System.out.println("ERROR!");
+                        System.out.println("ERROR: ошибка чтения файла: проверьте data/settings.txt");
                     }
 
                     System.out.printf("Ваш сгенерированный пароль (длина %d):\n\n", lengthPassword);

@@ -2,6 +2,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+
+/// Остаётся неиспользованным.
+
+
 public class Language {
     public static String[] checkLanguage() {
         String language = "";
