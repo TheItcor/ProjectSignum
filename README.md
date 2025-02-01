@@ -4,6 +4,12 @@
 
 ![изображение](https://github.com/user-attachments/assets/2629d758-6c48-4364-ada7-e99cb26ec0f8)
 
+## How to use?
+Open Project Signum.bat, choose language, enter "n", then enter your name of service, login and password (or just press Enter it generate password for you). Now in main menu enter "l" and you will be able to see your login and password there.
+
+You can also change the length of the generated password in the settings. 
+`Menu>settings>y {number}`
+
 
 ## How does this work?
 You enter the data about logins & passwords, it is immediately encrypted and saved on your hard drive. Then when you need it, the data is decrypted and you receive it!
@@ -12,9 +18,13 @@ You enter the data about logins & passwords, it is immediately encrypted and sav
 [Versions](https://github.com/TheItcor/ProjectSignum/releases)
 | Version | Main Feature |
 | ----------- | ----------- |
-| Alpha v.0.1    | Main Menu   |
-| Alpha v.0.2    |  Settings  |
-| Alpha v.0.3    |  Password generator  |
+| Beta v1.0    |  Translations  |
+| Alpha v0.5    |  SLP-system  |
+| Alpha v0.4    |  small update  |
+| Alpha v0.3    |  Password generator  |
+| Alpha v0.2    |  Settings  |
+| Alpha v0.1    | Main Menu   |
+
 
 ## Alpha dev (100% Done)
 * Main feature - encrypt your data
