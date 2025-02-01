@@ -1,0 +1,17 @@
+{
+  "txtErrRead": "ERROR: Error reading file.",
+  "txtErrInput": "ERROR: Invalid input",
+  "TxtEnterForContinue": "Enter - to continue",
+  "txtMainMenu": "\u001B[1mcommands:\u001B[0m \n\u001B[35m[h]\u001B[0m - About\n\u001B[35m[e]\u001B[0m - Exit\n\u001B[35m[l]\u001B[0m - List of logins and passwords\n\u001B[35m[n]\u001B[0m - Add a new username and password\n\u001B[35m[s]\u001B[0m - Settings\n\u001B[35m[g]\u001B[0m - Generate password",
+  "txtSettingsMenu": "           Settings\n\u001B[35m[l ru/en]\u001B[0m - change language\n\u001B[35m[y (number)]\u001B[0m - change the length of the generated password\n\u001B[35m[e]\u001B[0m - exit",
+  "txtSettingsSet": "Settings applied!",
+  "txtGeneratedPassword": "Your generated password (length ",
+  "txtPasswordCopy": "\n(Already copied to clipboard)",
+  "txtHelp": "Project Signum is a program for saving logins \nand passwords. The program saves your data in \nencrypted form so that intruders cannot read it. \nThe program does not send user data anywhere. \nEverything is stored exclusively on your PC. \nIn order to use the program's functions \nin the main menu, write the corresponding letter \nin the list of commands. For example, enter \nthe letter \"n\" to create a new login \nand password combination. You can also \nuse the documentation in README.MD \nfor more information.",
+  "txtYourService": "Service:",
+  "txtYourLogin": "Your login: ",
+  "txtYourPassword": "your Password: ",
+  "txtCreatingService": "Enter service name:",
+  "txtCreatingLogin": "Enter login:",
+  "txtCreatingPassword": "Enter your password or press Enter to generate it"
+}

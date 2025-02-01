@@ -3,17 +3,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.Objects;
-import java.util.Scanner;
 
 public class Main {
 
     ///              ============== !!! Особое внимание!!! ==============
-    static String version = "ALPHA v 0.5";
+    static String version = "BETA v 1.0";
     ///              ============== !!! Особое внимание!!! ==============
+
 
 
 
@@ -23,33 +22,21 @@ public class Main {
 
     public static void title() {
         line();
-        System.out.println("      Project Signum " + version);
-        System.out.println("      Author: Itcor (Aleksandr Shewchuk)");
+        System.out.println("\u001b[35m" + "      Project Signum " + version + "\u001b[0m");
+        System.out.println("      \u001b[1mAuthor: Itcor (Aleksandr Shewchuk)\u001b[0m");
         line();
     }
 
     public static void help() {
+        Map<String, Object> translations = TranslationManager.loadTranslations(language);
+
         title();
-        line();
-        System.out.println("""
-                                Project Signum - это программа для сохранения\s
-                                логинов и паролей. Программа сохраняет ваши
-                                данные в зашифрованном виде, так чтобы злоумышленники
-                                не смогли бы их прочитать. Программа не отправляет\s
-                                данные пользователя куда-либо. Всё хранится исклю-
-                                чительно на вашем ПК. Для того, чтобы воспользо-
-                                ваться функциями программы в главном меню на-\s
-                                пишите соответствующую букву в списке команд.
-                                Так, к примеру введите букву 'n', чтобы создать\s
-                                Новую связку логина и паролей. Вы также можете\s
-                                воспользоваться документацией в README.MD для\s
-                                большей информации.\s
-                                """);
+        System.out.println(translations.get("txtHelp"));
         line();
 
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Нажмите любую кнопку чтобы продолжить");
+        System.out.println(translations.get("TxtEnterForContinue"));
         scanner.nextLine();
     }
 
@@ -59,7 +46,22 @@ public class Main {
     }
 
     public static void line() {
-        System.out.println("===============================================");
+        System.out.println("\u001b[33m" + "===============================================" + "\u001b[0m");
+    }
+
+    public static String language = "";
+
+    // Проверка языка
+    public static void checkLanguage() {
+        language = "";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(settingsTxtPath))) {
+            // Чтение первой строки в Settings.txt
+            language = reader.readLine();
+        } catch (IOException e) {
+            System.err.println("ERROR" + e.getMessage());
+        }
+
     }
 
 
@@ -67,12 +69,12 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String itsStartedBefore = null;
 
+        checkLanguage();
+
 
         // НАЧАЛО НАСТРОЙКИ ЯЗЫКА
         // Чтение Settings.txt
         // itsStartedBefore = ТРЕТЬЯ СТРОКА ФАЙЛА Settings.txt
-
-
         try (BufferedReader reader = new BufferedReader(new FileReader(settingsTxtPath))) {
             // Пропускаем две строки
             reader.readLine();
@@ -81,13 +83,13 @@ public class Main {
             // Читаем третью строку
             itsStartedBefore = reader.readLine();
         } catch (IOException e) {
-            System.err.println("Ошибка при чтении файла: " + e.getMessage());
+            System.err.println("ERROR: " + e.getMessage());
         }
 
         while (Objects.equals(itsStartedBefore, "0")) {
             System.out.println("Выберите язык. Впишите 'ru' - для продолжения на русском языке.");
             System.out.println("Select language. Input 'en' for english language");
-            System.out.println("Seleccionar idioma. Escribe 'es' para continuar en español.");
+            //System.out.println("Seleccionar idioma. Escribe 'es' para continuar en español."); - в будущем
             String selectLanguage = scanner.nextLine();
 
             itsStartedBefore = switch (selectLanguage) {
@@ -105,36 +107,27 @@ public class Main {
 
         }
         // КОНЕЦ НАСТРОЙКИ ЯЗЫКА
-        clean();
-
 
 
         // НАЧАЛО ЦИКЛА ПРОГРАММЫ
         boolean run = true;
         while (run) {
+            checkLanguage(); // Проверка языка при каждой итерации (Немного неудобно, но в прочем работает нормально)
+            Map<String, Object> translations = TranslationManager.loadTranslations(language);
             clean(); // очищает консоль после каждой итерации с функциями (методами)
-
-
 
             // Начало консольного интерфейса
             title();
-            System.out.println("""
-                        Команды:\s
-                        [h] - Помощь / О программе\s
-                        [e] - Выход из приложения\s
-                        [l] - Список логинов и паролей, редактирование\s
-                        [n] - Добавить новый логин и пароль\s
-                        [s] - Настройки программы\s
-                        [g] - Сгенерировать пароль""");
+            System.out.println(translations.get("txtMainMenu"));
             line();
-            System.out.println("Ваш ввод (английские буквы):");
+            System.out.print(">");
 
 
             // Выбор пользователя
             String userChoice = scanner.nextLine();
 
             switch (userChoice) {
-                // Вывод текста о помощи
+                // Вывод текста о программе
                 case ("h"):
                     clean();
                     help();
@@ -146,22 +139,22 @@ public class Main {
                     run = false;
                     break;
 
-                // Список логинов и паролей
+                // Вывод списока логинов и паролей
                 case ("l"):
                     clean();
                     title();
                     SignumManager.readAllSlpFiles();
                     line();
-                    System.out.println("Нажмите, чтобы продолжить");
+                    System.out.println(translations.get("TxtEnterForContinue"));
                     scanner.nextLine();
                     break;
 
-                // Добавить новый логин и пароль к словарю
+                // Добавить новый SLP
                 case ("n"):
                     clean();
                     title();
                     SignumManager.newLoginAndPassword();
-                    System.out.println("Нажмите, чтобы продолжить");
+                    System.out.println(translations.get("TxtEnterForContinue"));
                     scanner.nextLine();
                     break;
 
@@ -172,15 +165,14 @@ public class Main {
                     while (settingsNotDone) {
                         clean();
                         title();
-                        System.out.println("           Настройки");
-                        System.out.println("[l ru/en/es] - изменить язык");
-                        System.out.println("[y (число)] - изменить длину генерируемого пароля");
-                        System.out.println("Нажмите любую кнопку чтобы продолжить");
+                        System.out.println(translations.get("txtSettingsMenu"));
+                        line();
+                        System.out.print(">");
                         String userChoiceSettings = scanner.nextLine();
 
                         String[] commandAndInput = userChoiceSettings.split(" ");
 
-                        // Изменение языка
+                        // Выбор языка
                         if (Objects.equals(commandAndInput[0], "l")) {
                             List<String> lines = Files.readAllLines(pathS);
                             switch (userChoiceSettings) {
@@ -201,26 +193,28 @@ public class Main {
                                     break;
                             }
 
-                        // изменение длины генерируемого пароля
+                        // Изменение длины генерируемого пароля
                         // Проверка: является ли первая буква y и есть ли только числа во второй части команды
                         } else if (Objects.equals(commandAndInput[0], "y") && commandAndInput[1].matches("\\d+")) {
-                                List<String> lines = Files.readAllLines(pathS);
-                                int number = Integer.parseInt(commandAndInput[1]);
-                                lines.set(1, String.valueOf(number));
-                                Files.write(pathS, lines);
-                                settingsNotDone = false;
-                                break;
+                            List<String> lines = Files.readAllLines(pathS);
+                            int number = Integer.parseInt(commandAndInput[1]);
+                            lines.set(1, String.valueOf(number));
+                            Files.write(pathS, lines);
+                            settingsNotDone = false;
+                            break;
+                        } else if (Objects.equals(commandAndInput[0], "e")) {
+                            settingsNotDone = false;
                         } else {
-                            System.out.println("ERROR: Неверный ввод");
+                            System.out.println(translations.get("txtErrInput"));
                             scanner.nextLine();
                         }
                     }
 
                     clean();
                     title();
-                    System.out.println("Настройки применены!");
+                    System.out.println(translations.get("txtSettingsSet"));
                     line();
-                    System.out.println("Нажмите любую кнопку чтобы продолжить");
+                    System.out.println(translations.get("TxtEnterForContinue"));
                     scanner.nextLine();
                     break;
 
@@ -229,6 +223,7 @@ public class Main {
                     clean();
                     title();
 
+                    // Тут начинается генерация пароля на основе параметра размера пароля, который лежит на второй строчке в Settings.txt
                     int lengthPassword = 0;
                     try (BufferedReader reader = new BufferedReader(new FileReader(settingsTxtPath))) {
                         reader.readLine();
@@ -236,13 +231,13 @@ public class Main {
                         // Читаем вторую строку, где находится параметр размера для пароля
                         lengthPassword = Integer.parseInt(reader.readLine());
                     } catch (IOException e) {
-                        System.out.println("ERROR: ошибка чтения файла: проверьте data/settings.txt");
+                        System.out.println(translations.get("txtErrRead"));
                     }
-
-                    System.out.printf("Ваш сгенерированный пароль (длина %d):\n\n", lengthPassword);
+                    System.out.print(translations.get("txtGeneratedPassword"));
+                    System.out.printf("%d):\n\n", lengthPassword);
                     System.out.println(Generator.generatePassword(lengthPassword));
-                    System.out.println("\n(Уже скопирован в буфер обмена)");
-                    System.out.println("Нажмите любую кнопку чтобы продолжить");
+                    System.out.println(translations.get("txtPasswordCopy"));
+                    System.out.println(translations.get("TxtEnterForContinue"));
                     scanner.nextLine();
                     break;
 

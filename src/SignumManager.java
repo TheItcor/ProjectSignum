@@ -2,23 +2,41 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class SignumManager {
+    /* SLP-файл - это файл, который в зашифрованном виде хранит информацию о сервисе, логине и пароле (Service Login Password)
+     *
+     * Данный класс с функциями:
+     * 1) newLoginAndPassword() сборка SLP-файла (Раньше задумывалось о добавлении его в список/словарь, но в итоге отказался
+     * от этой идеи в пользу сохранения каждого Сервиса-Логина-Пароля по отдельным папкам). На этой стадии так-же происходит
+     * шифрование информации.
+     * 2) createSlpFile(Сервис, Логин, Пароль) - создание SLP-файла как .txt файл.
+     * 3) readAllSlpFiles() - Чтение, расшифровка и вывод всех SLP-файлов в терминал
+     */
 
-    /// Создание SLP-файла и добавление его в список
+
+    /// Создание SLP-файла
     public static void newLoginAndPassword() {
+        Map<String, Object> translations = TranslationManager.loadTranslations(Main.language);
+
+        /* Сначала вводится сервис, логин и пароль, затем он шифруется и создаётся SLP-файл
+         */
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Введите название сервиса для которого сохраняем логин и пароль");
+        // Ввод
+        System.out.println(translations.get("txtCreatingService"));
         String service = scanner.nextLine();
-        System.out.println("Введите ваш логин:");
+        System.out.println(translations.get("txtCreatingLogin"));
         String login = scanner.nextLine();
-        System.out.println("Введите ваш пароль или нажмите Enter для его генерации");
+        System.out.println(translations.get("txtCreatingPassword"));
         String userChoice = scanner.nextLine();
         String password = "";
 
+
+        // Если пользователь оставил пустым поле с паролем, то производится генерация пароля с размером, который указан в Settings.txt
         if (Objects.equals(userChoice, "")) {
             // Сгенерированный пароль
             int lengthPassword = 16;
@@ -28,7 +46,7 @@ public class SignumManager {
                 // Читаем вторую строку, где находится параметр размера для пароля
                 lengthPassword = Integer.parseInt(reader.readLine());
             } catch (IOException e) {
-                System.out.println("ERROR: ошибка чтения файла: проверьте data/settings.txt");
+                System.out.println(translations.get("txtErrRead"));
             }
             password = Generator.generatePassword(lengthPassword);
 
@@ -39,9 +57,9 @@ public class SignumManager {
 
         Main.clean();
         Main.title();
-        System.out.printf("Сервис: %s\n", service);
-        System.out.printf("Ваш логин: %s\n", login);
-        System.out.printf("Ваш пароль: %s\n", password);
+        System.out.printf(translations.get("txtYourService") + "%s\n", service);
+        System.out.printf(translations.get("txtYourLogin") + "%s\n", login);
+        System.out.printf(translations.get("txtYourPassword") + "%s\n", password);
 
         String cryptedService = Cryption.encrypt(service);
         String cryptedLogin = Cryption.encrypt(login);
@@ -56,19 +74,21 @@ public class SignumManager {
         createSlpFile(cryptedService, cryptedLogin, cryptedPassword);
     }
 
-
+    // Путь к SLP-файлам
     static final String SlpPath = "data" + File.separator + "SLP";
 
 
     // Функция создания файла с сервисом, логином (Service Login Password SLP)
     public static void createSlpFile(String serviceName, String login, String password) {
+        Map<String, Object> translations = TranslationManager.loadTranslations(Main.language);
+
         // Создаем директорию, если она не существует
         File directory = new File(SlpPath);
         if (!directory.exists()) {
             if (directory.mkdirs()) {
-                System.out.println("Директория создана: " + SlpPath);
+                System.out.println(SlpPath);
             } else {
-                System.err.println("Не удалось создать директорию: " + SlpPath);
+                System.err.println("ERROR: " + SlpPath);
                 return;
             }
         }
@@ -82,17 +102,19 @@ public class SignumManager {
             writer.write(login + "\n");       // Записываем логин
             writer.write(password + "\n");    // Записываем пароль
         } catch (IOException e) {
-            System.err.println("ERROR: создании файла: " + e.getMessage());
+            System.err.println("ERROR:" + e.getMessage());
         }
     }
 
     // Функция чтения всех файлов .txt и вывода их содержимого (SLP)
     public static void readAllSlpFiles() {
+        Map<String, Object> translations = TranslationManager.loadTranslations(Main.language);
+
         File directory = new File(SlpPath); // Указываем директорию
 
         // Проверяем, существует ли директория
         if (!directory.exists()) {
-            System.out.println("Директория " + SlpPath + " не существует.");
+            System.out.println("ERROR: " + SlpPath);
             return;
         }
 
@@ -100,7 +122,7 @@ public class SignumManager {
         File[] files = directory.listFiles((dir, name) -> name.endsWith(".txt"));
 
         if (files == null || files.length == 0) {
-            System.out.println("Файлы сервисов не найдены в директории " + SlpPath + ".");
+            System.out.println("ERROR: " + SlpPath);
             return;
         }
 
@@ -113,7 +135,7 @@ public class SignumManager {
 
                 System.out.println(Cryption.decrypt(serviceName) + ": " + Cryption.decrypt(login) + " " + Cryption.decrypt(password)); // Выводим в консоль
             } catch (IOException e) {
-                System.err.println("Ошибка при чтении файла " + file.getName() + ": " + e.getMessage());
+                System.err.println(translations.get("txtErrRead") + file.getName() + ": " + e.getMessage());
             }
         }
     }

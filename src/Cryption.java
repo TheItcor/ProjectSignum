@@ -4,6 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class Cryption {
+    /* По-хорошему этот файл должен пройти обфускацию для безопасности кода.
+     * В будущем заменю способ шифрования.
+     */
     private static final String ALGORITHM = "AES";
     private static final String key = "I4n*6H8ULhGCfNY_sq5h2aFRUf*u-f8KlY8VZRFRN5rHiXa&Jg8QR4NAU05UutJevfmj6XV37AJ0gv*TP2o&2uOhs0DS7Nd&aAdK";
 
