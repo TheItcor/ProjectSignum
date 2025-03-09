@@ -59,3 +59,4 @@ You enter the data about logins & passwords, it is immediately encrypted and sav
 
 
 P.S. The author is not responsible for the safety of your data. Take care of important information.
+Licence: GNU GPL (General Public License)
